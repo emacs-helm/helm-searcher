@@ -1,0 +1,9 @@
+# ignore these directories.
+/.git
+/recipes
+/test
+helm-searcher-pkg.el
+helm-searcher-autoloads.el
+
+# ignore generated files.
+*.elc
