@@ -273,7 +273,7 @@ This is uses by both replace in file and project.")
 (defun helm-searcher--do-replace-matched-action (_cand)
   "Get the new string input and replace all candidates."
   (helm :sources '(helm-searcher--replace-complete-source)
-        :prompt (format ivy-searcher--prompt-format
+        :prompt (format helm-searcher--prompt-format
                         (format "Replace %s with" helm-searcher--search-string))
         :buffer helm-searcher--buffer-name))
 
