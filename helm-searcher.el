@@ -34,6 +34,7 @@
 
 (require 'cl-lib)
 (require 'helm)
+(require 'helm-mode)
 (require 'searcher)
 (require 's)
 
@@ -72,20 +73,45 @@
 (defvar helm-searcher--replace-candidates '()
   "Record down all the candidates for searching.")
 
-(defvar helm-searcher--source
-  (helm-build-in-buffer-source "Searcher"
-    :init 'helm-searcher--init
-    :real-to-display 'helm-searcher--do-search-file
-    :persistent-action 'helm-searcher--do-search-complete-action
-    :follow (and helm-follow-mode-persistent 1))
-  "Helm source for `helm-searcher'.")
+(defconst helm-searcher--search-project-source
+  (helm-build-sync-source "Searcher"
+    :candidates (lambda () (helm-searcher--do-search-project helm-pattern))
+    :action #'helm-searcher--do-search-complete-action
+    :volatile t)
+  "Source that uses for search in project.")
 
-(setq helm-searcher--source
-      (helm-build-in-buffer-source "Searcher"
-        :init 'helm-searcher--init
-        :real-to-display 'helm-searcher--do-search-file
-        :persistent-action 'helm-searcher--do-search-complete-action
-        :follow (and helm-follow-mode-persistent 1)))
+(defconst helm-searcher--search-file-source
+  (helm-build-sync-source "Searcher"
+    :candidates (lambda () (helm-searcher--do-search-file helm-pattern))
+    :action #'helm-searcher--do-search-complete-action
+    :volatile t)
+  "Source that uses for search in file.")
+
+(defconst helm-searcher--replace-project-source
+  (helm-build-sync-source "Searcher"
+    :candidates (lambda () (helm-searcher--do-search-project helm-pattern))
+    :action #'helm-searcher--do-replace-matched-action
+    :volatile t)
+  "Source that uses for replace in project.")
+
+(defconst helm-searcher--replace-file-source
+  (helm-build-sync-source "Searcher"
+    :candidates (lambda () (helm-searcher--do-search-file helm-pattern))
+    :action #'helm-searcher--do-replace-matched-action
+    :volatile t)
+  "Source that uses for replace in file.")
+
+(defconst helm-searcher--replace-complete-source
+  (helm-build-sync-source "Searcher"
+    :candidates (lambda () (helm-searcher--do-replace helm-pattern))
+    :action #'helm-searcher--do-replace-complete-action
+    :volatile t)
+  "Source that uses for replace in for current all selected candidates.
+This is uses by both replace in file and project.")
+
+(defun helm-searcher--is-contain-list-string (in-list in-str)
+  "Check if IN-STR contain in any string in the IN-LIST."
+  (cl-some #'(lambda (lb-sub-str) (string-match-p (regexp-quote lb-sub-str) in-str)) in-list))
 
 (defun helm-searcher--goto-line (ln)
   "Goto LN line number."
@@ -107,7 +133,7 @@
   (let ((key-pt (1+ col)))
     (concat
      (substring ln-str 0 key-pt)
-     (propertize input 'face 'ivy-highlight-face)
+     input
      (substring ln-str (+ key-pt (length input)) (length ln-str)))))
 
 (defun helm-searcher--candidate-to-plist (cand)
@@ -125,9 +151,6 @@
        (setq ln-str (nth 3 data))))
     (list :file file :string ln-str :position pos :line-number ln :column col)))
 
-(defun helm-searcher--init ()
-  "Initialize the list of candidates."
-  '("hh" "okay" "jisjd"))
 
 ;;; Search
 
@@ -168,17 +191,17 @@
       (setq candidate
             (cl-case helm-searcher-display-info
               ('position
-               (concat (propertize file 'face 'ivy-grep-info)
+               (concat (propertize file 'face 'helm-moccur-buffer)
                        (helm-searcher--separator-string)
-                       (propertize pos 'face 'ivy-grep-line-number)
+                       (propertize pos 'face 'helm-grep-lineno)
                        (helm-searcher--separator-string)
                        ln-str))
               ('line/column
-               (concat (propertize file 'face 'ivy-grep-info)
+               (concat (propertize file 'face 'helm-moccur-buffer)
                        (helm-searcher--separator-string)
-                       (propertize ln 'face 'ivy-grep-line-number)
+                       (propertize ln 'face 'helm-grep-lineno)
                        (helm-searcher--separator-string)
-                       (propertize col 'face 'ivy-grep-line-number)
+                       (propertize col 'face 'helm-grep-lineno)
                        (helm-searcher--separator-string)
                        ln-str))))
       (push candidate candidates)
@@ -186,19 +209,26 @@
       (push (cons candidate item) helm-searcher--replace-candidates))
     candidates))
 
+(defun helm-searcher--do-search-project (input)
+  "Search for INPUT in project."
+  (let ((project-dir (cdr (project-current)))
+        (cands (searcher-search-in-project input)))
+    (setq helm-searcher--search-string input)
+    (helm-searcher--do-search-input-action input cands project-dir)))
+
 (defun helm-searcher--do-search-file (input)
   "Search for INPUT in file."
   (let ((dir (concat (f-dirname helm-searcher--target-buffer) "/"))
         (cands (searcher-search-in-file helm-searcher--target-buffer input)))
     (setq helm-searcher--search-string input)
-    (message "input: %s" input)
     (helm-searcher--do-search-input-action input cands dir)))
 
 ;;;###autoload
 (defun helm-searcher-search-project ()
   "Search through the project."
   (interactive)
-  (helm :sources '(helm-searcher--source)
+  (helm :sources '(helm-searcher--search-project-source)
+        :prompt (format helm-searcher--prompt-format "Search")
         :buffer helm-searcher--buffer-name))
 
 ;;;###autoload
@@ -206,16 +236,53 @@
   "Search through current file."
   (interactive)
   (let ((helm-searcher--target-buffer (or (buffer-file-name) (buffer-name))))
-    (helm :sources '(helm-searcher--source)
+    (helm :sources '(helm-searcher--search-file-source)
+          :prompt (format helm-searcher--prompt-format "Search")
           :buffer helm-searcher--buffer-name)))
 
 ;;; Replace
+
+(defun helm-searcher--do-replace-complete-action (_cand)
+  "Replace all recorded candidates."
+  (let ((output-files '()))
+    (dolist (cand helm-searcher--replace-candidates)
+      (let* ((cand-plist (cdr cand))
+             (file (plist-get cand-plist :file))
+             (new-content nil))
+        (unless (helm-searcher--is-contain-list-string output-files file)
+          (push file output-files)
+          (setq new-content (s-replace-regexp helm-searcher--search-string
+                                              helm-searcher--replace-string
+                                              (helm-searcher--get-string-from-file file)))
+          (write-region new-content nil file))))))
+
+(defun helm-searcher--do-replace (input)
+  "Update the candidates with INPUT in helm so the user can look at it."
+  (setq helm-searcher--replace-string input)
+  (let ((candidates '()))
+    (dolist (cand helm-searcher--replace-candidates)
+      (let* ((cand-str (car cand)) (cand-plist (cdr cand))
+             (ln-str (plist-get cand-plist :string)))
+        (setq cand
+              (concat
+               (substring cand-str 0 (- (length cand-str) (length ln-str)))
+               (s-replace-regexp helm-searcher--search-string input ln-str)))
+        (push cand candidates)))
+    (reverse candidates)))
+
+(defun helm-searcher--do-replace-matched-action (_cand)
+  "Get the new string input and replace all candidates."
+  (helm :sources '(helm-searcher--replace-complete-source)
+        :prompt (format ivy-searcher--prompt-format
+                        (format "Replace %s with" helm-searcher--search-string))
+        :buffer helm-searcher--buffer-name))
 
 ;;;###autoload
 (defun helm-searcher-replace-project ()
   "Search and replace string in project."
   (interactive)
-  (helm :sources '(helm-searcher--source)
+  (helm :sources '(helm-searcher--replace-project-source)
+        :prompt (format helm-searcher--prompt-format "Replace")
         :buffer helm-searcher--buffer-name))
 
 ;;;###autoload
@@ -223,7 +290,8 @@
   "Search and replace string in file."
   (interactive)
   (let ((helm-searcher--target-buffer (or (buffer-file-name) (buffer-name))))
-    (helm :sources '(helm-searcher--source)
+    (helm :sources '(helm-searcher--replace-file-source)
+          :prompt (format helm-searcher--prompt-format "Replace")
           :buffer helm-searcher--buffer-name)))
 
 (provide 'helm-searcher)
