@@ -218,7 +218,7 @@ This is uses by both replace in file and project.")
 
 (defun helm-searcher--do-search-file (input)
   "Search for INPUT in file."
-  (let ((dir (concat (f-dirname helm-searcher--target-buffer) "/"))
+  (let ((dir (f-slash (f-dirname helm-searcher--target-buffer)))
         (cands (searcher-search-in-file helm-searcher--target-buffer input)))
     (setq helm-searcher--search-string input)
     (helm-searcher--do-search-input-action input cands dir)))
