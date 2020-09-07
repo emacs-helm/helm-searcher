@@ -73,6 +73,12 @@
 (defvar helm-searcher--replace-candidates '()
   "Record down all the candidates for searching.")
 
+;;; Util
+
+(defun helm-searcher--project-path ()
+  "Get the current project path."
+  (cdr (project-current)))
+
 (defconst helm-searcher--search-project-source
   (helm-build-sync-source "Searcher"
     :candidates (lambda () (helm-searcher--do-search-project helm-pattern))
@@ -156,11 +162,13 @@ This is uses by both replace in file and project.")
 
 (defun helm-searcher--do-search-complete-action (cand)
   "Do action with CAND."
-  (let* ((data (helm-searcher--candidate-to-plist cand))
+  (let* ((project-dir (helm-searcher--project-path))
+         (data (helm-searcher--candidate-to-plist cand))
          (file (plist-get data :file))
          (pos (plist-get data :position))
          (ln (plist-get data :line-number))
          (col (plist-get data :column)))
+    (when project-dir (setq file (f-join project-dir file)))
     (if (file-exists-p file) (find-file file) (switch-to-buffer file))
     (cl-case helm-searcher-display-info
       ('position
@@ -211,7 +219,7 @@ This is uses by both replace in file and project.")
 
 (defun helm-searcher--do-search-project (input)
   "Search for INPUT in project."
-  (let ((project-dir (cdr (project-current)))
+  (let ((project-dir (helm-searcher--project-path))
         (cands (searcher-search-in-project input)))
     (setq helm-searcher--search-string input)
     (helm-searcher--do-search-input-action input cands project-dir)))
