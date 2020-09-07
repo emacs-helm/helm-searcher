@@ -80,38 +80,43 @@
   (cdr (project-current)))
 
 (defconst helm-searcher--search-project-source
-  (helm-build-sync-source "Searcher"
-    :candidates (lambda () (helm-searcher--do-search-project helm-pattern))
-    :action #'helm-searcher--do-search-complete-action
-    :volatile t)
+  (helm-build-sync-source
+   "Searcher"
+   :candidates (lambda () (helm-searcher--do-search-project helm-pattern))
+   :action #'helm-searcher--do-search-complete-action
+   :volatile t)
   "Source that uses for search in project.")
 
 (defconst helm-searcher--search-file-source
-  (helm-build-sync-source "Searcher"
-    :candidates (lambda () (helm-searcher--do-search-file helm-pattern))
-    :action #'helm-searcher--do-search-complete-action
-    :volatile t)
+  (helm-build-sync-source
+   "Searcher"
+   :candidates (lambda () (helm-searcher--do-search-file helm-pattern))
+   :action #'helm-searcher--do-search-complete-action
+   :volatile t)
   "Source that uses for search in file.")
 
 (defconst helm-searcher--replace-project-source
-  (helm-build-sync-source "Searcher"
-    :candidates (lambda () (helm-searcher--do-search-project helm-pattern))
-    :action #'helm-searcher--do-replace-matched-action
-    :volatile t)
+  (helm-build-sync-source
+   "Searcher"
+   :candidates (lambda () (helm-searcher--do-search-project helm-pattern))
+   :action #'helm-searcher--do-replace-matched-action
+   :volatile t)
   "Source that uses for replace in project.")
 
 (defconst helm-searcher--replace-file-source
-  (helm-build-sync-source "Searcher"
-    :candidates (lambda () (helm-searcher--do-search-file helm-pattern))
-    :action #'helm-searcher--do-replace-matched-action
-    :volatile t)
+  (helm-build-sync-source
+   "Searcher"
+   :candidates (lambda () (helm-searcher--do-search-file helm-pattern))
+   :action #'helm-searcher--do-replace-matched-action
+   :volatile t)
   "Source that uses for replace in file.")
 
 (defconst helm-searcher--replace-complete-source
-  (helm-build-sync-source "Searcher"
-    :candidates (lambda () (helm-searcher--do-replace helm-pattern))
-    :action #'helm-searcher--do-replace-complete-action
-    :volatile t)
+  (helm-build-sync-source
+   "Searcher"
+   :candidates (lambda () (helm-searcher--do-replace helm-pattern))
+   :action #'helm-searcher--do-replace-complete-action
+   :volatile t)
   "Source that uses for replace in for current all selected candidates.
 This is uses by both replace in file and project.")
 
@@ -136,11 +141,10 @@ This is uses by both replace in file and project.")
 
 (defun helm-searcher--propertize-line-string (ln-str input col)
   "Propertize the LN-STR with INPUT and column (COL)."
-  (let ((key-pt (1+ col)))
-    (concat
-     (substring ln-str 0 key-pt)
-     input
-     (substring ln-str (+ key-pt (length input)) (length ln-str)))))
+  (concat
+   (substring ln-str 0 col)
+   input
+   (substring ln-str (+ col (length input)) (length ln-str))))
 
 (defun helm-searcher--candidate-to-plist (cand)
   "Convert CAND string to a plist data."
@@ -156,7 +160,6 @@ This is uses by both replace in file and project.")
        (setq col (nth 2 data))
        (setq ln-str (nth 3 data))))
     (list :file file :string ln-str :position pos :line-number ln :column col)))
-
 
 ;;; Search
 
