@@ -178,7 +178,7 @@ This is uses by both replace in file and project.")
        (setq ln (string-to-number ln))
        (setq col (string-to-number col))
        (helm-searcher--goto-line ln)
-       (move-to-column (1+ col))))))
+       (move-to-column col)))))
 
 (defun helm-searcher--do-search-input-action (input cands dir)
   "Do the search action by INPUT, CANDS and DIR."
@@ -190,7 +190,7 @@ This is uses by both replace in file and project.")
       (setq file (plist-get item :file)) (setq file (s-replace dir "" file))
       (progn  ; Resolve line string.
         (setq ln-str (plist-get item :string))
-        (setq col (plist-get item :column))
+        (setq col (1+ (plist-get item :column)))
         (setq ln-str (helm-searcher--propertize-line-string ln-str input col)))
       (progn  ; Resolve information.
         (setq pos (plist-get item :position)) (setq pos (number-to-string pos))
