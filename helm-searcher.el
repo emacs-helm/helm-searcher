@@ -144,6 +144,7 @@ This is uses by both replace in file and project.")
   (concat
    (substring ln-str 0 col)
    input
+   ;; TODO: Seems like this sometimes break for miscalculation?
    (ignore-errors (substring ln-str (+ col (length input)) (length ln-str)))))
 
 (defun helm-searcher--candidate-to-plist (cand)
