@@ -144,7 +144,7 @@ This is uses by both replace in file and project.")
   (concat
    (substring ln-str 0 col)
    input
-   (substring ln-str (+ col (length input)) (length ln-str))))
+   (ignore-errors (substring ln-str (+ col (length input)) (length ln-str)))))
 
 (defun helm-searcher--candidate-to-plist (cand)
   "Convert CAND string to a plist data."
@@ -238,6 +238,7 @@ This is uses by both replace in file and project.")
 (defun helm-searcher-search-project ()
   "Search through the project."
   (interactive)
+  (searcher-clean-cache)
   (helm :sources '(helm-searcher--search-project-source)
         :prompt (format helm-searcher--prompt-format "Search")
         :buffer helm-searcher--buffer-name))
@@ -246,6 +247,7 @@ This is uses by both replace in file and project.")
 (defun helm-searcher-search-file ()
   "Search through current file."
   (interactive)
+  (searcher-clean-cache)
   (let ((helm-searcher--target-buffer (or (buffer-file-name) (buffer-name))))
     (helm :sources '(helm-searcher--search-file-source)
           :prompt (format helm-searcher--prompt-format "Search")
@@ -292,6 +294,7 @@ This is uses by both replace in file and project.")
 (defun helm-searcher-replace-project ()
   "Search and replace string in project."
   (interactive)
+  (searcher-clean-cache)
   (helm :sources '(helm-searcher--replace-project-source)
         :prompt (format helm-searcher--prompt-format "Replace")
         :buffer helm-searcher--buffer-name))
@@ -300,6 +303,7 @@ This is uses by both replace in file and project.")
 (defun helm-searcher-replace-file ()
   "Search and replace string in file."
   (interactive)
+  (searcher-clean-cache)
   (let ((helm-searcher--target-buffer (or (buffer-file-name) (buffer-name))))
     (helm :sources '(helm-searcher--replace-file-source)
           :prompt (format helm-searcher--prompt-format "Replace")
