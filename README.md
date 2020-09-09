@@ -28,6 +28,10 @@ Search and replace `string` or `regex` in current file or buffer.
 
 Search and replace `string` or `regex` in current project.
 
+## Todo List
+
+- [ ] Preselect the next/previous candidate option.
+
 ## Contribution
 
 If you would like to contribute to this project, you may either
