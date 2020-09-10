@@ -144,7 +144,7 @@ This is uses by both replace in file and project.")
   (let ((sec1 (+ col (length input))))
     (concat
      (substring ln-str 0 col)
-     (propertize (substring ln-str col sec1) 'face 'ivy-highlight-face)
+     (propertize (substring ln-str col sec1) 'face 'helm-grep-match)
      ;; TODO: Seems like this sometimes break for miscalculation?
      (ignore-errors (substring ln-str sec1 (length ln-str))))))
 
@@ -164,6 +164,10 @@ This is uses by both replace in file and project.")
     (list :file file :string ln-str :position pos :line-number ln :column col)))
 
 ;;; Search
+
+(defun helm-searcher--init ()
+  "Initialize and get ready for searcher to search."
+  (searcher-clean-cache))
 
 (defun helm-searcher--do-search-complete-action (cand)
   "Do action with CAND."
@@ -240,7 +244,7 @@ This is uses by both replace in file and project.")
 (defun helm-searcher-search-project ()
   "Search through the project."
   (interactive)
-  (searcher-clean-cache)
+  (helm-searcher--init)
   (helm :sources '(helm-searcher--search-project-source)
         :prompt (format helm-searcher--prompt-format "Search")
         :buffer helm-searcher--buffer-name))
@@ -249,7 +253,7 @@ This is uses by both replace in file and project.")
 (defun helm-searcher-search-file ()
   "Search through current file."
   (interactive)
-  (searcher-clean-cache)
+  (helm-searcher--init)
   (let ((helm-searcher--target-buffer (or (buffer-file-name) (buffer-name))))
     (helm :sources '(helm-searcher--search-file-source)
           :prompt (format helm-searcher--prompt-format "Search")
@@ -296,7 +300,7 @@ This is uses by both replace in file and project.")
 (defun helm-searcher-replace-project ()
   "Search and replace string in project."
   (interactive)
-  (searcher-clean-cache)
+  (helm-searcher--init)
   (helm :sources '(helm-searcher--replace-project-source)
         :prompt (format helm-searcher--prompt-format "Replace")
         :buffer helm-searcher--buffer-name))
@@ -305,7 +309,7 @@ This is uses by both replace in file and project.")
 (defun helm-searcher-replace-file ()
   "Search and replace string in file."
   (interactive)
-  (searcher-clean-cache)
+  (helm-searcher--init)
   (let ((helm-searcher--target-buffer (or (buffer-file-name) (buffer-name))))
     (helm :sources '(helm-searcher--replace-file-source)
           :prompt (format helm-searcher--prompt-format "Replace")
