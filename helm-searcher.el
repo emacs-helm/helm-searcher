@@ -142,11 +142,14 @@ This is uses by both replace in file and project.")
 (defun helm-searcher--propertize-line-string (ln-str input col)
   "Propertize the LN-STR with INPUT and column (COL)."
   (let ((sec1 (+ col (length input))))
-    (concat
-     (substring ln-str 0 col)
-     (propertize (substring ln-str col sec1) 'face 'helm-grep-match)
-     ;; TODO: Seems like this sometimes break for miscalculation?
-     (ignore-errors (substring ln-str sec1 (length ln-str))))))
+    ;; TODO:
+    ;; 1) Seems like this sometimes break for miscalculation?
+    ;; 2) Maybe it breaks because of the non-ascii character?
+    (ignore-errors
+      (concat
+       (substring ln-str 0 col)
+       (propertize (substring ln-str col sec1) 'face 'helm-grep-match)
+       (substring ln-str sec1 (length ln-str))))))
 
 (defun helm-searcher--candidate-to-plist (cand)
   "Convert CAND string to a plist data."
