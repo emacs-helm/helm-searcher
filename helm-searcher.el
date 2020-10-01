@@ -158,13 +158,13 @@ This is uses by both replace in file and project.")
          (pos nil) (ln nil) (col nil))
     (cl-case helm-searcher-display-info
       ('position
-       (setq pos (nth 1 data))
-       (setq ln-str (nth 2 data)))
+       (setq pos (nth 1 data)
+             ln-str (nth 2 data)))
       ('line/column
-       (setq ln (nth 1 data))
-       (setq col (nth 2 data))
-       (setq ln-str (nth 3 data))))
-    (list :file file :string ln-str :position pos :line-number ln :column col)))
+       (setq ln (nth 1 data)
+             col (nth 2 data)
+             ln-str (nth 3 data))))
+    (list :file file :string ln-str :start pos :line-number ln :column col)))
 
 ;;; Search
 
@@ -177,7 +177,7 @@ This is uses by both replace in file and project.")
   (let* ((project-dir (helm-searcher--project-path))
          (data (helm-searcher--candidate-to-plist cand))
          (file (plist-get data :file))
-         (pos (plist-get data :position))
+         (pos (plist-get data :start))
          (ln (plist-get data :line-number))
          (col (plist-get data :column)))
     (when project-dir (setq file (f-join project-dir file)))
@@ -187,8 +187,7 @@ This is uses by both replace in file and project.")
        (setq pos (string-to-number pos))
        (goto-char (1+ pos)))
       ('line/column
-       (setq ln (string-to-number ln))
-       (setq col (string-to-number col))
+       (setq ln (string-to-number ln) col (string-to-number col))
        (helm-searcher--goto-line ln)
        (move-to-column col)))))
 
@@ -205,7 +204,7 @@ This is uses by both replace in file and project.")
         (setq col (plist-get item :column))
         (setq ln-str (helm-searcher--propertize-line-string ln-str input col)))
       (progn  ; Resolve information.
-        (setq pos (plist-get item :position)) (setq pos (number-to-string pos))
+        (setq pos (plist-get item :start)) (setq pos (number-to-string pos))
         (setq ln (plist-get item :line-number)) (setq ln (number-to-string ln))
         (setq col (number-to-string col)))
       (setq candidate
