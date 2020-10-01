@@ -6,7 +6,7 @@
 ;; Author: Shen, Jen-Chieh <jcs090218@gmail.com>
 ;; Description: Helm interface to use searcher.
 ;; Keyword: helm interface searcher search replace grep ag rg
-;; Version: 0.2.3
+;; Version: 0.2.4
 ;; Package-Requires: ((emacs "25.1") (helm "2.0") (searcher "0.1.8") (s "1.12.0") (f "0.20.0"))
 ;; URL: https://github.com/jcs-elpa/helm-searcher
 
