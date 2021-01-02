@@ -8,7 +8,7 @@
 ;; Keyword: helm interface searcher search replace grep ag rg
 ;; Version: 0.2.4
 ;; Package-Requires: ((emacs "25.1") (helm "2.0") (searcher "0.1.8") (s "1.12.0") (f "0.20.0"))
-;; URL: https://github.com/jcs-elpa/helm-searcher
+;; URL: https://github.com/emacs-helm/helm-searcher
 
 ;; This file is NOT part of GNU Emacs.
 
@@ -42,7 +42,7 @@
   "Helm interface to use searcher."
   :prefix "helm-searcher-"
   :group 'tool
-  :link '(url-link :tag "Repository" "https://github.com/jcs-elpa/helm-searcher"))
+  :link '(url-link :tag "Repository" "https://github.com/emacs-helm/helm-searcher"))
 
 (defcustom helm-searcher-display-info 'position
   "Display option for file information."
