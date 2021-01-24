@@ -189,12 +189,12 @@ This is uses by both replace in file and project.")
   "Do action with CAND."
   (let* ((project-dir (helm-searcher--project-path))
          (data (helm-searcher--candidate-to-plist cand))
-         (file (plist-get data :file))
+         (file (plist-get data :file)) (filename (f-filename file))
          (pos (plist-get data :start))
          (ln (plist-get data :line-number))
          (col (plist-get data :column)))
     (when project-dir (setq file (f-join project-dir file)))
-    (if (file-exists-p file) (find-file file) (switch-to-buffer file))
+    (if (file-exists-p file) (find-file file) (switch-to-buffer filename))
     (cl-case helm-searcher-display-info
       (position
        (setq pos (string-to-number pos))
