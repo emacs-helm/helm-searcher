@@ -151,11 +151,24 @@ This is uses by both replace in file and project.")
        (propertize (substring ln-str col sec1) 'face 'helm-grep-match)
        (substring ln-str sec1 (length ln-str))))))
 
+(defun helm-searcher--read-selection (selection)
+  "Read SELECTION and return list of data (file, line, column)."
+  (let ((buf-lst (buffer-list)) buf-name buf-regex sel-lst)
+    (setq found
+          (cl-some (lambda (buf)
+                     (setq buf-name (buffer-name buf)
+                           buf-regex (format "^%s" (regexp-quote buf-name)))
+                     (string-match-p buf-regex selection))
+                   buf-lst))
+    (setq selection (s-replace-regexp buf-regex "" selection)
+          sel-lst (split-string selection helm-searcher-separator))
+    (list (if found buf-name (nth 0 sel-lst)) (nth 1 sel-lst) (nth 2 sel-lst))))
+
 (defun helm-searcher--candidate-to-plist (cand)
   "Convert CAND string to a plist data."
-  (let* ((data (split-string cand helm-searcher-separator))
-         (file (nth 0 data)) (ln-str nil)
-         (pos nil) (ln nil) (col nil))
+  (let* ((data (helm-searcher--read-selection cand))
+         (file (nth 0 data)) ln-str
+         pos ln col)
     (cl-case helm-searcher-display-info
       ('position
        (setq pos (nth 1 data)
