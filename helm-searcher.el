@@ -170,10 +170,10 @@ This is uses by both replace in file and project.")
          (file (nth 0 data)) ln-str
          pos ln col)
     (cl-case helm-searcher-display-info
-      ('position
+      (position
        (setq pos (nth 1 data)
              ln-str (nth 2 data)))
-      ('line/column
+      (line/column
        (setq ln (nth 1 data)
              col (nth 2 data)
              ln-str (nth 3 data))))
@@ -196,10 +196,10 @@ This is uses by both replace in file and project.")
     (when project-dir (setq file (f-join project-dir file)))
     (if (file-exists-p file) (find-file file) (switch-to-buffer file))
     (cl-case helm-searcher-display-info
-      ('position
+      (position
        (setq pos (string-to-number pos))
        (goto-char (1+ pos)))
-      ('line/column
+      (line/column
        (setq ln (string-to-number ln) col (string-to-number col))
        (helm-searcher--goto-line ln)
        (move-to-column col)))))
@@ -222,13 +222,13 @@ This is uses by both replace in file and project.")
         (setq col (number-to-string col)))
       (setq candidate
             (cl-case helm-searcher-display-info
-              ('position
+              (position
                (concat (propertize file 'face 'helm-moccur-buffer)
                        (helm-searcher--separator-string)
                        (propertize pos 'face 'helm-grep-lineno)
                        (helm-searcher--separator-string)
                        ln-str))
-              ('line/column
+              (line/column
                (concat (propertize file 'face 'helm-moccur-buffer)
                        (helm-searcher--separator-string)
                        (propertize ln 'face 'helm-grep-lineno)
