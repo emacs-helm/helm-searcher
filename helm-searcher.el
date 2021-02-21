@@ -287,7 +287,8 @@ This is uses by both replace in file and project.")
           (push file output-files)
           (setq new-content (s-replace-regexp helm-searcher--search-string
                                               helm-searcher--replace-string
-                                              (helm-searcher--get-string-from-file file)))
+                                              (helm-searcher--get-string-from-file file)
+                                              t))
           (write-region new-content nil file))))))
 
 (defun helm-searcher--do-replace (input)
@@ -300,7 +301,7 @@ This is uses by both replace in file and project.")
         (setq cand
               (concat
                (substring cand-str 0 (- (length cand-str) (length ln-str)))
-               (s-replace-regexp helm-searcher--search-string input ln-str)))
+               (s-replace-regexp helm-searcher--search-string input ln-str t)))
         (push cand candidates)))
     (reverse candidates)))
 
