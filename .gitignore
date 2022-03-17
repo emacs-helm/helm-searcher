@@ -7,3 +7,5 @@ helm-searcher-autoloads.el
 
 # ignore generated files.
 *.elc
+
+/.eask
