@@ -1,11 +1,15 @@
-# ignore these directories.
+# ignore these directories
 /.git
 /recipes
 /test
-helm-searcher-pkg.el
-helm-searcher-autoloads.el
 
-# ignore generated files.
+# ignore generated files
 *.elc
 
-/.eask
+# eask packages
+.eask/
+dist/
+
+# packaging
+*-autoloads.el
+*-pkg.el
