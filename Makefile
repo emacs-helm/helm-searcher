@@ -5,7 +5,7 @@ EASK ?= eask
 
 TEST-FILES := $(shell ls test/helm-searcher-*.el)
 
-.PHONY: clean package install compile checkdoc lint unix-test
+.PHONY: clean checkdoc lint package install compile test
 
 ci: clean package install compile
 
@@ -21,7 +21,7 @@ compile:
 	@echo "Compiling..."
 	$(EASK) compile
 
-unix-test:
+test:
 	@echo "Testing..."
 	$(EASK) exec ert-runner -L . $(LOAD-TEST-FILES) -t '!no-win' -t '!org'
 
