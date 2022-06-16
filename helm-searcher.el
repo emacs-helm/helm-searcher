@@ -4,11 +4,10 @@
 ;; Created date 2020-06-24 13:00:57
 
 ;; Author: Shen, Jen-Chieh <jcs090218@gmail.com>
-;; Description: Helm interface to use searcher.
-;; Keyword: helm interface searcher search replace grep ag rg
+;; URL: https://github.com/emacs-helm/helm-searcher
 ;; Version: 0.2.5
 ;; Package-Requires: ((emacs "25.1") (helm "2.0") (searcher "0.1.8") (s "1.12.0") (f "0.20.0"))
-;; URL: https://github.com/emacs-helm/helm-searcher
+;; Keywords: helm interface searcher search replace grep ag rg
 
 ;; This file is NOT part of GNU Emacs.
 
