@@ -3,7 +3,7 @@
          "Helm interface to use searcher")
 
 (website-url "https://github.com/emacs-helm/helm-searcher")
-(keywords "helm" "interface" "searcher" "search" "replace" "grep" "ag" "rg")
+(keywords "convenience" "replace" "grep" "ag" "rg")
 
 (package-file "helm-searcher.el")
 
