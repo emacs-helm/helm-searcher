@@ -7,7 +7,7 @@
 ;; URL: https://github.com/emacs-helm/helm-searcher
 ;; Version: 0.2.5
 ;; Package-Requires: ((emacs "25.1") (helm "2.0") (searcher "0.1.8") (s "1.12.0") (f "0.20.0"))
-;; Keywords: helm interface searcher search replace grep ag rg
+;; Keywords: convenience replace grep ag rg
 
 ;; This file is NOT part of GNU Emacs.
 
