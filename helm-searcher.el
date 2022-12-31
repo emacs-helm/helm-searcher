@@ -1,6 +1,6 @@
 ;;; helm-searcher.el --- Helm interface to use searcher  -*- lexical-binding: t; -*-
 
-;; Copyright (C) 2020-2021  Shen, Jen-Chieh
+;; Copyright (C) 2020-2023  Shen, Jen-Chieh
 ;; Created date 2020-06-24 13:00:57
 
 ;; Author: Shen, Jen-Chieh <jcs090218@gmail.com>
