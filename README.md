@@ -1,7 +1,7 @@
 [![License: GPL v3](https://img.shields.io/badge/License-GPL%20v3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
+[![JCS-ELPA](https://raw.githubusercontent.com/jcs-emacs/badges/master/elpa/v/helm-searcher.svg)](https://jcs-emacs.github.io/jcs-elpa/#/helm-searcher)
 [![MELPA](https://melpa.org/packages/helm-searcher-badge.svg)](https://melpa.org/#/helm-searcher)
 [![MELPA Stable](https://stable.melpa.org/packages/helm-searcher-badge.svg)](https://stable.melpa.org/#/helm-searcher)
-[![JCS-ELPA](https://raw.githubusercontent.com/jcs-emacs/badges/master/elpa/v/helm-searcher.svg)](https://jcs-emacs.github.io/jcs-elpa/#/helm-searcher)
 
 # helm-searcher
 > Helm interface to use searcher.
