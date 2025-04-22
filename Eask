@@ -1,3 +1,5 @@
+;; -*- mode: eask; lexical-binding: t -*-
+
 (package "helm-searcher"
          "0.2.5"
          "Helm interface to use searcher")
