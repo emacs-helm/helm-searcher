@@ -6,7 +6,7 @@
 ;; Author: Shen, Jen-Chieh <jcs090218@gmail.com>
 ;; URL: https://github.com/emacs-helm/helm-searcher
 ;; Version: 0.2.5
-;; Package-Requires: ((emacs "25.1") (helm "2.0") (searcher "0.1.8") (s "1.12.0") (f "0.20.0"))
+;; Package-Requires: ((emacs "25.1") (helm "2.0") (searcher "0.1.8") (f "0.20.0"))
 ;; Keywords: convenience replace grep ag rg
 
 ;; This file is NOT part of GNU Emacs.
@@ -159,7 +159,7 @@ This is uses by both replace in file and project.")
                            buf-regex (format "^%s" (regexp-quote buf-name)))
                      (string-match-p buf-regex selection))
                    buf-lst))
-    (setq selection (s-replace-regexp buf-regex "" selection)
+    (setq selection (replace-regexp-in-string buf-regex "" selection)
           sel-lst (split-string selection helm-searcher-separator))
     (list (if found buf-name (nth 0 sel-lst)) (nth 1 sel-lst) (nth 2 sel-lst))))
 
@@ -210,7 +210,7 @@ This is uses by both replace in file and project.")
         (candidate ""))
     (setq helm-searcher--replace-candidates '())  ; Clean up.
     (dolist (item cands)
-      (setq file (plist-get item :file)) (setq file (s-replace dir "" file))
+      (setq file (file-name-nondirectory (plist-get item :file)))
       (progn  ; Resolve line string.
         (setq ln-str (plist-get item :string))
         (setq col (plist-get item :column))
@@ -284,10 +284,11 @@ This is uses by both replace in file and project.")
              (new-content nil))
         (unless (helm-searcher--is-contain-list-string output-files file)
           (push file output-files)
-          (setq new-content (s-replace-regexp helm-searcher--search-string
-                                              helm-searcher--replace-string
-                                              (helm-searcher--get-string-from-file file)
-                                              t))
+          (setq new-content (replace-regexp-in-string
+                             helm-searcher--search-string
+                             helm-searcher--replace-string
+                             (helm-searcher--get-string-from-file file)
+                             t))
           (write-region new-content nil file))))))
 
 (defun helm-searcher--do-replace (input)
@@ -300,7 +301,8 @@ This is uses by both replace in file and project.")
         (setq cand
               (concat
                (substring cand-str 0 (- (length cand-str) (length ln-str)))
-               (s-replace-regexp helm-searcher--search-string input ln-str t)))
+               (replace-regexp-in-string
+                helm-searcher--search-string input ln-str t)))
         (push cand candidates)))
     (reverse candidates)))
 
