@@ -35,7 +35,6 @@
 (require 'helm)
 (require 'helm-mode)
 (require 'searcher)
-(require 's)
 
 (defgroup helm-searcher nil
   "Helm interface to use searcher."
