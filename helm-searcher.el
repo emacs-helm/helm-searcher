@@ -6,7 +6,7 @@
 ;; Author: Shen, Jen-Chieh <jcs090218@gmail.com>
 ;; URL: https://github.com/emacs-helm/helm-searcher
 ;; Version: 0.2.5
-;; Package-Requires: ((emacs "25.1") (helm "2.0") (searcher "0.1.8") (f "0.20.0"))
+;; Package-Requires: ((emacs "25.1") (helm "2.0") (searcher "0.1.8"))
 ;; Keywords: convenience replace grep ag rg
 
 ;; This file is NOT part of GNU Emacs.
@@ -188,11 +188,12 @@ This is uses by both replace in file and project.")
   "Do action with CAND."
   (let* ((project-dir (helm-searcher--project-path))
          (data (helm-searcher--candidate-to-plist cand))
-         (file (plist-get data :file)) (filename (f-filename file))
+         (file (plist-get data :file))
+         (filename (helm-basename file))
          (pos (plist-get data :start))
          (ln (plist-get data :line-number))
          (col (plist-get data :column)))
-    (when project-dir (setq file (f-join project-dir file)))
+    (when project-dir (setq file (expand-file-name file project-dir)))
     (if (file-exists-p file) (find-file file) (switch-to-buffer filename))
     (cl-case helm-searcher-display-info
       (position
@@ -249,7 +250,7 @@ This is uses by both replace in file and project.")
 
 (defun helm-searcher--do-search-file (input)
   "Search for INPUT in file."
-  (let ((dir (f-slash (f-dirname helm-searcher--target-buffer)))
+  (let ((dir (file-name-as-directory (helm-basedir helm-searcher--target-buffer)))
         (cands (searcher-search-in-file helm-searcher--target-buffer input)))
     (setq helm-searcher--search-string input)
     (helm-searcher--do-search-input-action input cands dir)))
