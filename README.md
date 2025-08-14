@@ -7,6 +7,10 @@
 
 [![CI](https://github.com/emacs-helm/helm-searcher/actions/workflows/test.yml/badge.svg)](https://github.com/emacs-helm/helm-searcher/actions/workflows/test.yml)
 
+`helm-searcher` uses the [searcher](https://github.com/jcs-elpa/searcher) Emacs package as its backend.
+
+`searcher` is similar to tools like `ag`, `rg`, or `grep`, but is written entirely in Emacs Lisp and runs natively within Emacs, without external dependencies.
+
 ## 🔨 Usage
 
 ### Searching
